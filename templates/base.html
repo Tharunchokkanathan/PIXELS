@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - PIXELS Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        /* Bottom Dock UI Overrides */
+        :root {
+            --dock-height: 85px;
+        }
+        .sidebar { display: none !important; }
+        .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding-bottom: calc(var(--dock-height) + 40px) !important;
+            min-height: 100vh;
+        }
+        .top-header {
+            width: 100% !important;
+            left: 0 !important;
+            justify-content: space-between;
+        }
+        .bottom-dock {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 900px;
+            height: var(--dock-height);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+        [data-theme='dark'] .bottom-dock {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .dock-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+        }
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            gap: 6px;
+            padding: 10px;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 70px;
+        }
+        .dock-item i {
+            font-size: 22px;
+            transition: transform 0.3s ease;
+        }
+        .dock-item span {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .dock-item:hover {
+            color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.08);
+            transform: translateY(-2px);
+        }
+        .dock-item:hover i {
+            transform: translateY(-2px);
+        }
+        .dock-item.active {
+            color: var(--primary-color);
+        }
+        .dock-item.active i {
+            color: var(--primary-color);
+            filter: drop-shadow(0 2px 5px rgba(79, 70, 229, 0.3));
+        }
+        .logout-dock {
+            color: var(--error-color);
+        }
+        .logout-dock:hover {
+            color: var(--error-color);
+            background: rgba(239, 68, 68, 0.08);
+        }
+        @media (max-width: 768px) {
+            .bottom-dock {
+                bottom: 10px;
+                width: 98%;
+                border-radius: 24px;
+            }
+            .dock-item span { display: none; }
+            .dock-item { min-width: 50px; }
+        }
+    </style>
+    {% macro sidebar(role, active_page='') %}
+    <nav class="bottom-dock">
+        <div class="dock-container">
+            {% if role == 'leader' %}
+            <a href="{{ url_for('leader_dashboard') }}" class="dock-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('add_member') }}" class="dock-item {% if active_page == 'add_member' %}active{% endif %}">
+                <i class="fas fa-user-plus"></i>
+                <span>Add</span>
+            </a>
+            <a href="{{ url_for('events') }}" class="dock-item {% if active_page == 'events' %}active{% endif %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="{{ url_for('leaderboard') }}" class="dock-item {% if active_page == 'leaderboard' %}active{% endif %}">
+                <i class="fas fa-trophy"></i>
+                <span>Rank</span>
+            </a>
+            <a href="{{ url_for('club_info') }}" class="dock-item {% if active_page == 'club_info' %}active{% endif %}">
+                <i class="fas fa-info-circle"></i>
+                <span>Club</span>
+            </a>
+            <a href="{{ url_for('view_queries') }}" class="dock-item {% if active_page == 'view_queries' %}active{% endif %}">
+                <i class="fas fa-question-circle"></i>
+                <span>Inbox</span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('member_dashboard') }}" class="dock-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('events') }}" class="dock-item {% if active_page == 'events' %}active{% endif %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="{{ url_for('leaderboard') }}" class="dock-item {% if active_page == 'leaderboard' %}active{% endif %}">
+                <i class="fas fa-trophy"></i>
+                <span>Rank</span>
+            </a>
+            <a href="{{ url_for('blogs') }}" class="dock-item {% if active_page == 'blogs' %}active{% endif %}">
+                <i class="fas fa-blog"></i>
+                <span>Blog</span>
+            </a>
+            <a href="{{ url_for('club_info') }}" class="dock-item {% if active_page == 'club_info' %}active{% endif %}">
+                <i class="fas fa-info-circle"></i>
+                <span>Club</span>
+            </a>
+            <a href="{{ url_for('contact') }}" class="dock-item {% if active_page == 'contact' %}active{% endif %}">
+                <i class="fas fa-envelope"></i>
+                <span>Support</span>
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('logout') }}" class="dock-item logout-dock">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Exit</span>
+            </a>
+        </div>
+    </nav>
+    {% endmacro %}
+
+    {% macro header(user, role_text) %}
+    <header class="top-header">
+        <div class="header-brand">
+            <h2 style="margin: 0; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: var(--primary-color);">
+                <i class="fas fa-cube"></i> PIXELS
+            </h2>
+        </div>
+        <div class="user-profile">
+            <button id="theme-toggle" class="theme-toggle glass-button" onclick="toggleTheme()" style="margin-right: 15px;">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="user-info" style="text-align: right;">
+                <h4>{{ user.name }}</h4>
+                <p>{{ role_text }}</p>
+            </div>
+            <div class="avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));">
+                {{ user.name[0] }}
+            </div>
+        </div>
+    </header>
+    {% endmacro %}
+</head>
+
+<body class="{% block body_class %}dashboard-body{% endblock %}">
+    <script>
+        // Initial theme setup to prevent flicker
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">
+            {{ message }}
+            <button class="close-btn" onclick="this.parentElement.style.display='none'"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div id="mobile-overlay" class="mobile-overlay" onclick="toggleSidebar()"></div>
+
+    {% block content %}
+    <!-- Specific page content goes here -->
+    {% endblock %}
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : 'auto';
+        }
+
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function () {
+            const flashes = document.querySelectorAll('.flash-message');
+            flashes.forEach(flash => {
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 300);
+            });
+        }, 5000);
+    </script>
+
+    <script>
+        /* ── PIXELS 3D Tilt Engine ── */
+        (function () {
+            const TILT_MAX    = 12;   // max degrees of tilt
+            const GLARE_MAX   = 0.25; // glare opacity peak
+            const PERSPECTIVE = 900;  // px
+
+            const SELECTORS = [
+                '.bento-box',
+                '.rank-card',
+                '.event-card',
+                '.article-card',
+                '.query-card',
+                '.glass-form-container',
+                '.team-profile',
+                '.bento-card',
+                '.glass-card',
+            ].join(', ');
+
+            function initTilt() {
+                document.querySelectorAll(SELECTORS).forEach(card => {
+                    // skip if already initialised
+                    if (card.dataset.tiltReady) return;
+                    card.dataset.tiltReady = '1';
+
+                    // ensure card has a transform-style context
+                    card.style.transformStyle  = 'preserve-3d';
+                    card.style.willChange      = 'transform';
+
+                    // create glare overlay
+                    const glare = document.createElement('div');
+                    glare.style.cssText = `
+                        position:absolute; inset:0; border-radius:inherit;
+                        background:radial-gradient(circle at 50% 50%, rgba(255,255,255,${GLARE_MAX}), transparent 70%);
+                        pointer-events:none; opacity:0;
+                        transition:opacity 0.4s ease; z-index:10;
+                    `;
+                    // only add glare if card isn't already position:static
+                    const pos = getComputedStyle(card).position;
+                    if (pos === 'static') card.style.position = 'relative';
+                    card.appendChild(glare);
+
+                    card.addEventListener('mousemove', e => {
+                        const rect   = card.getBoundingClientRect();
+                        const cx     = rect.left + rect.width  / 2;
+                        const cy     = rect.top  + rect.height / 2;
+                        const dx     = (e.clientX - cx) / (rect.width  / 2); // -1 to 1
+                        const dy     = (e.clientY - cy) / (rect.height / 2); // -1 to 1
+
+                        const rotX   = -dy * TILT_MAX;  // pitch
+                        const rotY   =  dx * TILT_MAX;  // yaw
+
+                        card.style.transform = `perspective(${PERSPECTIVE}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.025, 1.025, 1.025)`;
+                        card.style.transition = 'transform 0.1s ease';
+
+                        // move glare to follow cursor
+                        const gx = ((e.clientX - rect.left) / rect.width)  * 100;
+                        const gy = ((e.clientY - rect.top)  / rect.height) * 100;
+                        glare.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,${GLARE_MAX}), transparent 65%)`;
+                        glare.style.opacity    = '1';
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform   = 'perspective(' + PERSPECTIVE + 'px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                        card.style.transition  = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+                        glare.style.opacity    = '0';
+                    });
+                });
+            }
+
+            // Run on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTilt);
+            } else {
+                initTilt();
+            }
+
+            // Re-run after any dynamic content (e.g. flash messages disappear)
+            const obs = new MutationObserver(initTilt);
+            obs.observe(document.body, { childList: true, subtree: true });
+        })();
+    </script>
+</body>
+
+</html>

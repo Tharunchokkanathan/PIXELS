@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {{ sidebar(role, 'blogs') }}
+
+    <main class="main-content">
+        {{ header(user, 'Club ' ~ role|capitalize) }}
+
+        <div class="content-wrapper">
+            <style>
+                .blog-wall {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+                    gap: 30px;
+                    margin-top: 40px;
+                }
+                .article-card {
+                    background: var(--surface-color);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 28px;
+                    padding: 35px;
+                    flex-direction: column;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+                }
+                .article-card:hover {
+                    transform: translateY(-8px);
+                }
+                .article-header {
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 15px;
+                    margin-bottom: 25px;
+                }
+                .article-avatar {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 16px;
+                    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 20px;
+                    font-weight: 800;
+                }
+                .article-author { font-size: 16px; font-weight: 700; margin: 0; color: var(--text-primary); }
+                .article-date { font-size: 13px; color: var(--text-secondary); margin-top: 2px; font-weight: 500; }
+                .article-title { font-size: 24px; font-weight: 800; line-height: 1.3; margin: 0 0 15px 0; color: var(--text-primary); }
+                .article-desc { font-size: 16px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 30px; }
+            </style>
+
+            <div class="page-title" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h1 style="font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;">PIXELS Media Hub</h1>
+                    <p style="font-size: 16px; opacity: 0.8;">Read the latest publications from platform engineers.</p>
+                </div>
+                {% if role == 'leader' %}
+                <a href="{{ url_for('add_blog') }}" class="btn" style="background: var(--primary-color); border-radius: 16px; font-weight: 700;">
+                    <i class="fas fa-pen-nib" style="margin-right: 8px;"></i>Draft Article
+                </a>
+                {% endif %}
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div style="margin-top: 20px; padding: 15px 25px; border-radius: 16px; background: {% if category == 'success' %}rgba(16, 185, 129, 0.1){% else %}rgba(239, 68, 68, 0.1){% endif %}; color: {% if category == 'success' %}#10b981{% else %}#ef4444{% endif %}; font-weight: 600;">
+                <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}" style="margin-right: 10px;"></i>{{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="blog-wall">
+                {% for blog in blogs %}
+                <div class="article-card">
+                    <div class="article-header">
+                        <div class="article-avatar">{{ blog.author[0] }}</div>
+                        <div>
+                            <h3 class="article-author">{{ blog.author }}</h3>
+                            <div class="article-date">{{ blog.date }}</div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="article-title">{{ blog.title }}</h2>
+                    <p class="article-desc">"{{ blog.description }}"</p>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: auto; border-top: 1px solid rgba(150,150,150,0.1); padding-top: 20px;">
+                        <a href="#" class="btn" style="background: rgba(0,0,0,0.05); color: var(--text-primary); border-radius: 12px; font-weight: 600;">
+                            Read Full Text
+                        </a>
+                        {% if role == 'leader' %}
+                        <a href="{{ url_for('delete_blog', blog_id=blog.id) }}" class="btn" style="background: rgba(239, 68, 68, 0.1); color: var(--error-color); border-radius: 12px;" onclick="return confirm('Purge this article from the network?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 100px 20px;">
+                    <i class="fas fa-layer-group" style="font-size: 64px; color: var(--text-secondary); opacity: 0.2; margin-bottom: 20px; display: block;"></i>
+                    <h2 style="font-size: 24px; font-weight: 700;">Zero Publications</h2>
+                    <p style="color: var(--text-secondary);">The media hub is currently empty.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

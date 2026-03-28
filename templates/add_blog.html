@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {{ sidebar('leader', 'blogs') }}
+
+    <main class="main-content">
+        {{ header(user, 'Club Leader') }}
+
+        <div class="content-wrapper">
+            <style>
+                .glass-form-container { background: var(--surface-color); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; padding: 40px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05); max-width: 800px; margin: 0 auto; position: relative; overflow: hidden; }
+                .glass-form-container::before { content:''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #ec4899, #be185d); }
+                .glass-input { background: rgba(0,0,0,0.02); border: 1px solid rgba(150,150,150,0.2); border-radius: 16px; padding: 15px 20px; font-size: 15px; width: 100%; color: var(--text-primary); transition: all 0.3s ease; box-sizing: border-box; }
+                [data-theme='dark'] .glass-input { background: rgba(255,255,255,0.02); }
+                .glass-input:focus { outline: none; border-color: #ec4899; box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.1); background: var(--surface-color); }
+                .form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+            </style>
+
+            <div class="page-title" style="text-align: center; margin-bottom: 30px;">
+                <h1 style="font-size: 38px; font-weight: 800; letter-spacing: -1px;"><i class="fas fa-pen-nib" style="color: #ec4899; margin-right: 15px;"></i>Publish Media Protocol</h1>
+                <p style="font-size: 16px; opacity: 0.8;">Broadcast a new technical briefing to the global PIXELS terminal.</p>
+            </div>
+
+            <div class="glass-form-container">
+                <form action="{{ url_for('add_blog') }}" method="POST">
+                    <div style="margin-bottom: 30px;">
+                        <label class="form-label" for="title">Transmission Title</label>
+                        <input type="text" id="title" name="title" class="glass-input" placeholder="e.g., Quantum Computing Basics" required style="font-size: 20px; font-weight: 800;">
+                    </div>
+
+                    <div style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <label class="form-label" for="author">Author Identity</label>
+                            <input type="text" id="author" name="author" class="glass-input" value="{{ user.name }}" required>
+                        </div>
+                        <div style="flex: 1; min-width: 250px;">
+                            <label class="form-label" for="date">Publish Date Log</label>
+                            <input type="text" id="date" name="date" class="glass-input" placeholder="e.g., March 14, 2026">
+                            <small style="color: var(--text-secondary); font-size: 11px; margin-top: 5px; display: block; font-weight: 600;">Leave blank to use current network timestamp.</small>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <label class="form-label" for="description">Transmission Data (Body Text)</label>
+                        <textarea id="description" name="description" class="glass-input" rows="8" placeholder="Draft your technical analysis or announcement here..." required style="resize: vertical; line-height: 1.6;"></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <button type="submit" class="btn" style="flex: 2; padding: 15px; border-radius: 16px; font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.2); color: white;">
+                            <i class="fas fa-satellite" style="margin-right: 8px;"></i> Broadcast Live
+                        </button>
+                        <a href="{{ url_for('blogs') }}" class="btn" style="flex: 1; padding: 15px; border-radius: 16px; font-size: 16px; font-weight: 700; background: transparent; color: var(--text-secondary); text-align: center; border: 1px solid rgba(150,150,150,0.3);">Scrap Draft</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

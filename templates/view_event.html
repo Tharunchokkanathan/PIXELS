@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {{ sidebar(user.role, 'dashboard') }}
+
+    <main class="main-content">
+        {{ header(user, 'Club ' ~ user.role|capitalize) }}
+
+        <div class="content-wrapper">
+            <style>
+                .event-bento {
+                    display: grid;
+                    grid-template-columns: repeat(12, 1fr);
+                    gap: 30px;
+                    margin-top: 30px;
+                }
+                .glass-card {
+                    background: var(--surface-color);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 28px;
+                    padding: 40px;
+                    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+                }
+                .bento-desc { grid-column: span 8; }
+                .bento-stats { grid-column: span 4; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+                
+                .participant-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                    gap: 15px;
+                    margin-top: 20px;
+                }
+                .participant-pill {
+                    background: rgba(0,0,0,0.02);
+                    border: 1px solid rgba(150,150,150,0.2);
+                    border-radius: 20px;
+                    padding: 15px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+                [data-theme='dark'] .participant-pill { background: rgba(255,255,255,0.02); }
+                .p-avatar {
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 12px;
+                    background: linear-gradient(135deg, #10b981, #047857);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                    font-weight: 800;
+                }
+
+                @media (max-width: 900px) {
+                    .bento-desc, .bento-stats { grid-column: span 12; }
+                }
+            </style>
+
+            <a href="{{ url_for(user.role ~ '_dashboard') }}" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 25px; font-size: 15px; color: var(--text-secondary); text-decoration: none; font-weight: 600; background: var(--surface-color); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(150,150,150,0.2);"><i class="fas fa-arrow-left"></i> Return to Operations</a>
+
+            <div class="event-bento">
+                <div class="glass-card bento-desc">
+                    <h1 style="font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-top: 0; margin-bottom: 10px; color: var(--primary-color);">{{ event.title }}</h1>
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;">
+                        <span style="background: rgba(0,0,0,0.04); padding: 8px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; color: var(--text-secondary);"><i class="far fa-calendar-alt" style="margin-right: 8px; color: var(--primary-color);"></i> {{ event.date }}</span>
+                        <span style="background: rgba(0,0,0,0.04); padding: 8px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; color: var(--text-secondary);"><i class="fas fa-satellite-dish" style="margin-right: 8px; color: var(--primary-color);"></i> {{ event.host_email }}</span>
+                    </div>
+
+                    <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 10px;">Mission Objective</h3>
+                    <p style="font-size: 16px; line-height: 1.8; color: var(--text-primary); opacity: 0.9; margin: 0;">{{ event.description }}</p>
+                </div>
+
+                <div class="glass-card bento-stats">
+                    <i class="fas fa-users" style="font-size: 48px; margin-bottom: 20px; opacity: 0.8;"></i>
+                    <h2 style="font-size: 64px; font-weight: 800; margin: 0; line-height: 1;">{{ event.participants|length }}</h2>
+                    <p style="font-size: 18px; font-weight: 600; opacity: 0.8; margin-top: 5px;">Active Nodes Enrolled</p>
+                </div>
+
+                <div class="glass-card" style="grid-column: span 12;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(150,150,150,0.2); padding-bottom: 20px; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; font-weight: 800; margin: 0;"><i class="fas fa-network-wired" style="color: #10b981; margin-right: 10px;"></i> Network Roster</h2>
+                    </div>
+
+                    <div class="participant-grid">
+                        {% for participant in participants %}
+                        <div class="participant-pill">
+                            <div class="p-avatar">{{ participant.name[0] }}</div>
+                            <div style="overflow: hidden;">
+                                <h4 style="margin: 0 0 3px 0; font-size: 16px; font-weight: 800; color: var(--text-primary);">{{ participant.name }}</h4>
+                                <div style="font-size: 12px; color: var(--text-secondary); font-family: monospace; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ participant.reg_no }} • {{ participant.department }}</div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class="fas fa-ghost" style="font-size: 32px; opacity: 0.3; margin-bottom: 10px; display: block;"></i>
+                            No nodes have established a handshake with this session.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
