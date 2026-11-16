@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login System{% endblock %}
+{% block title %}Sign In{% endblock %}
 
 {% block body_class %}login-body{% endblock %}
 
@@ -21,7 +21,7 @@
             <div class="icon-pulse">
                 <i class="fas fa-code"></i>
             </div>
-            <h2>Algonix Club</h2>
+            <h2>PIXELS</h2>
             <p>Enter your credentials to continue</p>
         </div>
 
@@ -60,23 +60,84 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--bg-color) 0%, #c7d2fe 100%);
+    margin: 0;
     position: relative;
     overflow: hidden;
-    margin: 0;
     font-family: 'Inter', sans-serif;
+    background-color: #eaefff;
+    background-image:
+        radial-gradient(900px circle at 10% 15%, rgba(99, 102, 241, 0.40), transparent 62%),
+        radial-gradient(800px circle at 92% 8%, rgba(56, 189, 248, 0.34), transparent 60%),
+        radial-gradient(900px circle at 82% 92%, rgba(236, 72, 153, 0.26), transparent 64%),
+        radial-gradient(700px circle at 16% 94%, rgba(45, 212, 191, 0.26), transparent 60%),
+        linear-gradient(160deg, #f8faff 0%, #e6ecff 55%, #dde6ff 100%);
 }
 
 [data-theme='dark'] .login-body {
-    background: linear-gradient(135deg, #0f1219 0%, #1e1b4b 100%);
+    background-color: #05060f;
+    background-image:
+        radial-gradient(900px circle at 12% 12%, rgba(79, 70, 229, 0.55), transparent 62%),
+        radial-gradient(800px circle at 90% 10%, rgba(14, 165, 233, 0.34), transparent 60%),
+        radial-gradient(900px circle at 84% 90%, rgba(168, 85, 247, 0.40), transparent 64%),
+        radial-gradient(700px circle at 14% 92%, rgba(236, 72, 153, 0.22), transparent 60%),
+        linear-gradient(160deg, #05060f 0%, #0a0f22 55%, #070713 100%);
+}
+
+/* Fine grid texture, faded towards the edges */
+.login-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(30, 41, 59, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(30, 41, 59, 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 10%, transparent 78%);
+    mask-image: radial-gradient(circle at 50% 45%, #000 10%, transparent 78%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+[data-theme='dark'] .login-body::before {
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+}
+
+/* Slow-drifting aurora glow */
+.login-body::after {
+    content: '';
+    position: absolute;
+    inset: -35%;
+    background: conic-gradient(from 0deg at 50% 50%,
+        rgba(99, 102, 241, 0.30),
+        rgba(56, 189, 248, 0.24),
+        rgba(236, 72, 153, 0.22),
+        rgba(45, 212, 191, 0.20),
+        rgba(99, 102, 241, 0.30));
+    filter: blur(90px);
+    animation: auroraDrift 28s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes auroraDrift {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-body::after { animation: none; }
+    .icon-pulse { animation: none; }
 }
 
 .glass-decoration {
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
-    z-index: 0;
-    opacity: 0.6;
+    z-index: 2;
+    opacity: 0.35;
+    pointer-events: none;
 }
 
 .glass-decoration.top-right {
@@ -92,7 +153,11 @@
     left: -150px;
     width: 600px;
     height: 600px;
-    background: var(--secondary-color);
+    background: #ec4899;
+}
+
+[data-theme='dark'] .glass-decoration {
+    opacity: 0.28;
 }
 
 .login-theme-wrapper {
@@ -131,15 +196,25 @@
 }
 
 .modern-login-card {
-    background: var(--surface-color);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 24px;
     padding: 40px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        0 24px 60px rgba(30, 41, 59, 0.16),
+        0 2px 0 rgba(255, 255, 255, 0.5) inset;
     transform: translateY(0);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+[data-theme='dark'] .modern-login-card {
+    background: rgba(15, 20, 38, 0.72);
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.6),
+        0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 .modern-login-card:hover {
@@ -174,11 +249,12 @@
 }
 
 .login-header h2 {
-    font-size: 26px;
-    font-weight: 700;
+    font-size: 30px;
+    font-weight: 800;
     color: var(--text-primary);
     margin-bottom: 8px;
-    letter-spacing: -0.5px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
 }
 
 .login-header p {
